@@ -14,28 +14,20 @@ $query = "SELECT user_id FROM login WHERE user_id = '$user'";
 
 $user_found = @mysqli_query($db_connect, $query);
 
-$query2 = "SELECT pw FROM login WHERE user_id = '$user' AND pw = '$pass'";
+$query = "SELECT pw FROM login WHERE user_id = '$user' AND pw = '$pass'";
 
-$pass_found = @mysqli_query($db_connect, $query2);
+$pass_found = @mysqli_query($db_connect, $query);
 
 if (mysqli_num_rows($user_found) > 0)
 {
-    /*
-    $actual_pass = $pass_found->fetch_assoc()['pw'];
-
-    echo $actual_pass; // Used for testing purposes.
-    echo $pass;
-    echo mysqli_num_rows($pass_found);
-    */
-
     if (mysqli_num_rows($pass_found) > 0)
-        echo "OK";
+        echo "true";
     else
-        echo "Invalid password.\n";
+        echo "false";
 }
 else
 {
-    echo "Invalid username\n";
+    echo "false";
     echo mysqli_error($db_connect);
 }
 

@@ -1,5 +1,6 @@
 <?php
 /**
+ * get_login_info.php
  * Created by PhpStorm.
  * User: ron
  * Date: 9/27/16
@@ -21,13 +22,13 @@ $pass_found = @mysqli_query($db_connect, $query);
 if (mysqli_num_rows($user_found) > 0)
 {
     if (mysqli_num_rows($pass_found) > 0)
-        echo "true";
+        echo true;
     else
-        echo "false";
+        echo false;
 }
 else
 {
-    echo "false";
+    echo false;
     echo mysqli_error($db_connect);
 }
 

@@ -11,17 +11,19 @@ require_once('db_connect.php');
 $user = $_POST['user'];
 $pass = $_POST['pass'];
 
+//First, we check to see if the id exists in the first place.
 $query = "SELECT user_id FROM login WHERE user_id = '$user'";
 
-$user_found = @mysqli_query($db_connect, $query);
+$user_found = @$db->query($query);
 
+//Next, does the given password match the one paired with the id in my table?
 $query = "SELECT pw FROM login WHERE user_id = '$user' AND pw = '$pass'";
 
-$pass_found = @mysqli_query($db_connect, $query);
+$pass_found = @$db->query($query);
 
-if (mysqli_num_rows($user_found) > 0)
+if ($user_found->num_rows > 0)
 {
-    if (mysqli_num_rows($pass_found) > 0)
+    if ($pass_found->num_rows > 0)
         echo true;
     else
         echo false;
@@ -29,9 +31,9 @@ if (mysqli_num_rows($user_found) > 0)
 else
 {
     echo false;
-    echo mysqli_error($db_connect);
+    echo $db->mysqli_error;
 }
 
-mysqli_close($db_connect);
+$db->close;
 
 ?>

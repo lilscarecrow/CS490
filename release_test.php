@@ -7,6 +7,8 @@
  */
 
 
-// Give Brent all test info including testname time created
+// Give Brent everything in tests table except questions + number of students that took test for prof
+// Give Brent everything in tests table except questions + questions for student
+// 3 separate files
 
 ?>

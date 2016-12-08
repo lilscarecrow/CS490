@@ -13,16 +13,20 @@
 require_once('db_connect.php');
 
 $user = $_POST['user'];
+$testNum = $_POST['testNum'];
+$testList = array();
 $qList = array();
+$testCaseList = array();
+$funcNameList = array();
 
-$testRow = @$db->query("SELECT * FROM tests WHERE ready='0' LIMIT 1");
+$testRow = @$db->query("SELECT * FROM tests WHERE num = '$testNum'");
 
 $row = $testRow->fetch_row();
 
 $testStr = $row[1]; // Gets data from second column of the row.
 $testNum = $row[0];
 
-@$db->query("UPDATE tests SET ready='1' WHERE num='$testNum'");
+//@$db->query("UPDATE tests SET ready='1' WHERE num='$testNum'"); Deprecated
 
 $qNums = explode(',', $testStr); // Splits question numbers by comma
 
@@ -32,18 +36,25 @@ for ($i = 0; $i < count($qNums); $i++)
 
     $qRow = $result->fetch_row();
 
-    $testCaseList = array();
+    $testCaseSubList = array();
 
-    for ($i = 2; $i < 7; $i++)
+    for ($j = 2; $j < 7; $j++)
     {
-        if ($qRow[$i] == null)
+        if ($qRow[$j] == null)
             break;
-        array_push($testCaseList, $qRow[$i]);
+        array_push($testCaseSubList, $qRow[$j]);
     }
 
-    $qList[$qRow[1]] = $testCaseList;
+    array_push($qList, $qRow[1]);
+    array_push($testCaseList, $testCaseSubList);
+    array_push($funcNameList, $qRow[8]);
+    //$qList[$qRow[1]] = $testCaseList;
 }
 
-echo json_encode($qList);
+array_push($testList, $qList);
+array_push($testList, $testCaseList);
+array_push($testList, $funcNameList);
+
+echo json_encode($testList);
 
 ?>

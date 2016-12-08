@@ -25,8 +25,6 @@ elseif(sizeof($test_cases) == 5)
 else
     $query = "INSERT INTO qbank VALUES(NULL, '$question', '$test_cases[0]', NULL, NULL, NULL, NULL, '$difficulty', '$function_name')";
 
-echo $query;
-
 @$db->query($query);
 
 ?>

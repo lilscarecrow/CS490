@@ -12,7 +12,7 @@ $user = $_POST['user'];
 $reqArray = $_POST['list'];
 $testName = $_POST['testName'];
 $question_field = 1;
-
+$difficulty_field = 7;
 
 if ($reqArray == null) // In this case, they want to retrieve questions to make a test.
 {
@@ -21,9 +21,15 @@ if ($reqArray == null) // In this case, they want to retrieve questions to make 
 
     for ($i = 1; $i <= $result->num_rows; $i++)
     {
+        $qSubList = array();
+
         $get = $db->query("SELECT * FROM qbank WHERE q_num = '$i'");
         $row = $get->fetch_row();
-        $qList[$i] = $row[$question_field];
+
+        array_push($qSubList, $row[$question_field]);
+        array_push($qSubList, $row[$difficulty_field]);
+
+        $qList[$i] = $qSubList;
     }
 
     echo json_encode($qList);
@@ -44,7 +50,7 @@ elseif (!is_numeric($reqArray))// In this case, they want to store a test.
     $testStr = str_ireplace("[", "", $testStr);
     $testStr = str_ireplace("]", "", $testStr);
 
-    $query = "INSERT INTO tests VALUES(NULL, '$testStr', '0', '$testName', NOW())";
+    $query = "INSERT INTO tests VALUES(NULL, '$testStr', '1', '$testName', NOW(), '0')";
     $result = $db->query($query);
 }
 

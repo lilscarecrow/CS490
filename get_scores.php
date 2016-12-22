@@ -11,25 +11,21 @@ require_once("db_connect.php");
 $user = $_POST['user'];
 $testNum = $_POST['testNum'];
 
-// Redo w/ new availability check
 $checkAvailable = @$db->query("SELECT * FROM tests WHERE num='$testNum'");
 
-/*
-if ($checkAvailable->fetch_row()[5] == '1' || $checkAvailable->fetch_row()[5] == 1)
-    $available = true;
-else
-    $available = false;
-
-if ($available) //if $available
-{
-*/
 $scoreList = array();
 
 $query = "SELECT questions FROM tests WHERE num='$testNum'";
 $result = @$db->query($query);
 $testStr = $result->fetch_row()[0];
-
 $qNums = explode(',', $testStr);
+
+$query = "SELECT weights FROM tests WHERE num='$testNum'";
+$result = @$db->query($query);
+$wghtStr = $result->fetch_row()[0];
+$weightList = explode(",", $wghtStr);
+
+$scoreList['weights'] = $weightList; // subarray 1
 
 $qList = array();
 
@@ -40,14 +36,15 @@ for ($i = 0; $i < count($qNums); $i++)
     array_push($qList, $result->fetch_row()[0]);
 }
 
-$scoreList['questions'] = $qList; // subarray 1
+$scoreList['questions'] = $qList; // subarray 2
 
-// Not gonna lie; I don't even want to comment all of this...
 $caseList = array();
 $remarks = array();
 $compiles = array();
 $submission = array();
 $comments = array();
+$weights = array();
+$qScores = array();
 
 for ($i = 0; $i < count($qNums); $i++)
 {
@@ -55,7 +52,7 @@ for ($i = 0; $i < count($qNums); $i++)
     $result = @$db->query("SELECT testcase1, testcase2, testcase3, testcase4, testcase5 FROM qbank WHERE q_num = '$qNums[$i]'");
     $qRow = $result->fetch_row();
 
-    $query = "SELECT compiles, case1, case2, case3, case4, case5, submission, remarks, comments FROM scores WHERE test_num='$testNum' AND question_num='$qNums[$i]' AND user='$user'";
+    $query = "SELECT compiles, case1, case2, case3, case4, case5, submission, remarks, comments, q_score FROM scores WHERE test_num='$testNum' AND question_num='$qNums[$i]' AND user='$user'";
     $scores = @$db->query($query);
     $row = $scores->fetch_row();
 
@@ -74,6 +71,8 @@ for ($i = 0; $i < count($qNums); $i++)
 
     array_push($submission, $row[6]);
 
+    array_push($qScores, $row[9]);
+
     if ($row[8] == null) // Puts an empty string instead of null for empty feedback fields.
     {
         array_push($comments, '');
@@ -83,12 +82,12 @@ for ($i = 0; $i < count($qNums); $i++)
     array_push($comments, $row[8]);
 }
 
-$scoreList['testCases'] = $caseList; // subarray 2
-$scoreList['remarks'] = $remarks; // subarray 3
-$scoreList['compile'] = $compiles; // subarray 4
-
-$scoreList['code'] = $submission; // submission - subarray 5
-$scoreList['feedback'] = $comments; // feedback - subarray 6
+$scoreList['testCases'] = $caseList; // subarray 3
+$scoreList['remarks'] = $remarks; // subarray 4
+$scoreList['compile'] = $compiles; // subarray 5
+$scoreList['code'] = $submission; // subarray 6
+$scoreList['feedback'] = $comments; // subarray 7
+$scoreList['subScores'] = $qScores; // subarray 8
 
 echo json_encode($scoreList);
 

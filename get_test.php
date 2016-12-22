@@ -18,6 +18,8 @@ $testList = array();
 $qList = array();
 $testCaseList = array();
 $funcNameList = array();
+$argNumList = array();
+$weightList = array();
 
 $testRow = @$db->query("SELECT * FROM tests WHERE num = '$testNum'");
 
@@ -25,10 +27,10 @@ $row = $testRow->fetch_row();
 
 $testStr = $row[1]; // Gets data from second column of the row.
 $testNum = $row[0];
-
-//@$db->query("UPDATE tests SET ready='1' WHERE num='$testNum'"); Deprecated
+$weightStr = $row[6];
 
 $qNums = explode(',', $testStr); // Splits question numbers by comma
+$weights = explode(',', $weightStr);
 
 for ($i = 0; $i < count($qNums); $i++)
 {
@@ -48,12 +50,18 @@ for ($i = 0; $i < count($qNums); $i++)
     array_push($qList, $qRow[1]);
     array_push($testCaseList, $testCaseSubList);
     array_push($funcNameList, $qRow[8]);
+    array_push($argNumList, $qRow[9]);
     //$qList[$qRow[1]] = $testCaseList;
 }
+
+for ($i = 0; $i < count($weights); $i++)
+    array_push($weightList, $weights[$i]);
 
 array_push($testList, $qList);
 array_push($testList, $testCaseList);
 array_push($testList, $funcNameList);
+array_push($testList, $argNumList);
+array_push($testList, $weights);
 
 echo json_encode($testList);
 

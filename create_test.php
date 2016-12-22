@@ -11,8 +11,11 @@ require_once("db_connect.php");
 $user = $_POST['user'];
 $reqArray = $_POST['list'];
 $testName = $_POST['testName'];
+$weight = $_POST['weight'];
 $question_field = 1;
 $difficulty_field = 7;
+
+// New field: weight. It's an array that I will turn into comma separated string and store.
 
 if ($reqArray == null) // In this case, they want to retrieve questions to make a test.
 {
@@ -37,12 +40,19 @@ if ($reqArray == null) // In this case, they want to retrieve questions to make 
 elseif (!is_numeric($reqArray))// In this case, they want to store a test.
 {
     $testStr = ''; // String Value that will be stored into my tests table.
+    $weightStr = '';
 
     $var = (array)$reqArray; // Makes reqArray iterable.
+    $weightArr = (array)$weight;
 
     for ($i = 0; $i < count($var); $i++)
     {
         $testStr = $testStr . $var[$i] . ','; // concatenate
+    }
+
+    for ($i = 0; $i < count($weightArr); $i++)
+    {
+        $weightStr = $weightStr . $weightArr[$i] . ',';
     }
 
     $testStr = substr($testStr, 0, -1); // Gets rid of trailing comma.
@@ -50,7 +60,12 @@ elseif (!is_numeric($reqArray))// In this case, they want to store a test.
     $testStr = str_ireplace("[", "", $testStr);
     $testStr = str_ireplace("]", "", $testStr);
 
-    $query = "INSERT INTO tests VALUES(NULL, '$testStr', '1', '$testName', NOW(), '0')";
+    $weightStr = substr($weightStr, 0, -1); // Gets rid of trailing comma.
+    $weightStr = str_ireplace("\"", "", $weightStr); // Cleaning up the brackets and quotes
+    $weightStr = str_ireplace("[", "", $weightStr);
+    $weightStr = str_ireplace("]", "", $weightStr);
+
+    $query = "INSERT INTO tests VALUES(NULL, '$testStr', '1', '$testName', NOW(), '0', '$weightStr')";
     $result = $db->query($query);
 }
 

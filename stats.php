@@ -46,44 +46,16 @@ for ($i = 0; $i < $rows->num_rows; $i++)
             array_push($uniqueList, $id);
     }
 
-    $query = @$db->query("SELECT user_id FROM login WHERE role='student'");
-    $numOfStudents = $query->num_rows;
-
     if ($role === 'professor')
+    {
+        $result = @$db->query("SELECT user_id FROM login WHERE role='student'");
+        $numOfStudents = $result->num_rows;
         array_push($subList, strval(sizeof($uniqueList)) . '/' . strval($numOfStudents));
+    }
+
     $statList[$rowList[0]] = $subList;
 }
 
 echo json_encode($statList);
-
-/*
-for ($i = 0; $i < $numRows; $i++) // Looking through each test
-{
-    $testNum = $testRows->fetch_row()[0];
-    $query = "SELECT * FROM scores WHERE user = '$user' AND test_num = '$testNum'";
-    $getTest = @$db->query($query);
-
-    if($getTest->num_rows > 0) // Narrowing down by which tests the student actually took.
-    {
-        $qList = array();
-
-        for ($j = 0; $j < $getTest->num_rows; $j++)
-        {
-            $qRow = $getTest->fetch_row();
-            $subList = array();
-
-            for ($k = 3; $k < sizeof($qRow); $k++)
-                array_push($subList, $qRow[$k]);
-
-            $qList[$qRow[2]] = $subList;
-        }
-
-        $statList[$testNum] = $qList;
-    }
-    else
-        continue;
-
-}
-*/
 
 ?>
